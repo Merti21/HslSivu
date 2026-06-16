@@ -18540,16 +18540,16 @@ const Vs = ho(F8),
           270: "66,00€",
           360: "72,00€"
         }), _ = ke({
-          AB: "1,65€",
-          ABC: "2,25€",
-          ABCD: "2,50€",
-          ABCDE: "3,05€",
-          BC: "1,65€",
-          BCD: "2,25€",
-          BCDE: "2,50€",
-          CD: "1,65€",
-          CDE: "2,25€",
-          DE: "1,65€"
+          AB: "3,30€",
+          ABC: "4,50€",
+          ABCD: "5,00€",
+          ABCDE: "6,10€",
+          BC: "3,30€",
+          BCD: "4,50€",
+          BCDE: "5,00€",
+          CD: "3,30€",
+          CDE: "4,50€",
+          DE: "3,30€"
         }), C = ke({
           AB: "1,65€",
           ABC: "2,25€",
@@ -19072,13 +19072,13 @@ function Sy(t, e, i, n, r, o) {
       class: "w-[90%] ml-[5%] border-b border-[#dedede] p-2 px-1 flex flex-row justify-between items-center"
     }, [k("label", d5, re(t.$t("ticket_buy.adult")), 1), e[19] || (e[19] = k("label", {
       class: "gotham_narrow_medium"
-    }, "1,65 €", -1))]), k("button", {
+    }, "3,30 €", -1))]), k("button", {
       onClick: e[3] || (e[3] = c => n.set_group(2)),
       class: "w-[90%] ml-[5%] border-b border-[#dedede] p-2 px-1 flex flex-row justify-between items-center"
     }, [k("label", f5, [Ht(re(t.$t("ticket_buy.child")) + " ", 1), k("small", h5, "7-17 " +
       re(t.$t("ticket_buy.years")), 1)]), e[20] || (e[20] = k("label", {
       class: "gotham_narrow_medium"
-    }, "1,80 €", -1))]), k("button", {
+    }, "1,65 €", -1))]), k("button", {
       onClick: e[4] || (e[4] = c => n.set_group(3)),
       class: "w-[90%] ml-[5%] border-b border-[#dedede] p-2 px-1 flex flex-row justify-between items-center"
     }, [k("label", p5, re(t.$t("ticket_buy.student")), 1), e[21] || (e[21] = k("label", {
