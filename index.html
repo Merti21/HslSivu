@@ -1,0 +1,275 @@
+<!DOCTYPE html><html lang="fi"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>fake HSL - lippu</title> 
+    
+    <link href="css/all.min.css" rel="stylesheet">
+    <link href="css/fonts.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/vue-0e4NEHia.css">
+    <link rel="stylesheet" href="css/app-C_ffcLDD.css">
+
+    <style>
+        div[class*="bg-[#CA2B53]"], .bg-\[\#CA2B53\], [wire\:offline] { display: none !important; }
+        .animate-spin, svg.w-12.h-12, svg.w-8.h-8.text-gray-200 { display: none !important; }
+        svg.text-blue-500 { display: none !important; }
+        .bg-white.rounded-xl.shadow-sm { display: none !important; }
+
+        .custom-profile-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; display: block; }
+
+        .minimal-color-picker {
+            display: none;
+            position: absolute;
+            z-index: 10000;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            gap: 8px;
+            flex-wrap: wrap;
+            max-width: 220px;
+        }
+        .minimal-color-picker.show {
+            display: flex;
+        }
+        .minimal-color-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .minimal-color-swatch:hover {
+            transform: scale(1.15);
+        }
+        .minimal-color-remove {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            background: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #333;
+            transition: transform 0.2s;
+        }
+        .minimal-color-remove:hover {
+            transform: scale(1.15);
+        }
+
+        .rounded-b-xl {
+            transition: background-color 0.8s ease !important;
+        }
+
+        .tab-indicator-anim {
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+    </style>
+</head>
+<body class="gotham_book">
+
+    <div id="app">
+        <main id="main" class="p-0 m-0"><div id="vue-app"></div></main>
+    </div>
+
+    <script src="vendor/livewire/livewire.min.js"></script>
+    <script type="module" src="js/vue-DohHF9Vj.js"></script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const DEFAULT_COLOR = "#007AC9";
+        const COLORS = ["#64BE1E", "#00985F", "#8C4799", "#00B9E4", "#FED100", "#FF6319", "#F89DD1", "#D90349", "#007DCB"];
+        const TICKET_OUTER = 'div.w-full.rounded-xl.relative.mt-2';
+        const TICKET_INNER = 'div.w-full.mt-1.relative.rounded-b-xl.mb-\\[2\\%\\]';
+
+        let removedTickets = JSON.parse(localStorage.getItem("removedTickets") || "[]");
+        let ticketColors = JSON.parse(localStorage.getItem("ticketColors") || "{}");
+        let picker, currentInner = null;
+        let currentTabPosition = 'right';
+
+        function createPicker() {
+            picker = document.createElement('div');
+            picker.className = 'minimal-color-picker';
+            COLORS.forEach(color => {
+                const swatch = document.createElement('div');
+                swatch.className = 'minimal-color-swatch';
+                swatch.style.backgroundColor = color;
+                swatch.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (currentInner) {
+                        const ticketId = currentInner.innerText.trim();
+                        currentInner.style.backgroundColor = color;
+                        ticketColors[ticketId] = color;
+                        localStorage.setItem("ticketColors", JSON.stringify(ticketColors));
+                        hidePicker();
+                    }
+                });
+                picker.appendChild(swatch);
+            });
+            const removeBtn = document.createElement('div');
+            removeBtn.className = 'minimal-color-remove';
+            removeBtn.innerHTML = '✕';
+            removeBtn.title = 'Poista';
+            removeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (currentInner) {
+                    const ticketId = currentInner.innerText.trim();
+                    if (!removedTickets.includes(ticketId)) {
+                        removedTickets.push(ticketId);
+                        localStorage.setItem("removedTickets", JSON.stringify(removedTickets));
+                    }
+                    const outer = currentInner.closest(TICKET_OUTER);
+                    if (outer) outer.remove();
+                    else currentInner.remove();
+                    hidePicker();
+                }
+            });
+            picker.appendChild(removeBtn);
+            document.body.appendChild(picker);
+
+            document.addEventListener('click', function(e) {
+                if (!picker.contains(e.target) && e.target !== currentInner) {
+                    hidePicker();
+                }
+            });
+        }
+
+        function showPicker(inner) {
+            currentInner = inner;
+            const rect = inner.getBoundingClientRect();
+            picker.style.top = (rect.top - picker.offsetHeight - 8) + 'px';
+            picker.style.left = rect.left + 'px';
+            picker.classList.add('show');
+        }
+
+        function hidePicker() {
+            picker.classList.remove('show');
+            currentInner = null;
+        }
+
+        function applyDefaults() {
+            const inners = document.querySelectorAll(TICKET_INNER);
+            inners.forEach(el => {
+                const ticketId = el.innerText.trim();
+                if (removedTickets.includes(ticketId)) {
+                    const outer = el.closest(TICKET_OUTER);
+                    if (outer) outer.remove();
+                    return;
+                }
+                if (ticketColors[ticketId]) {
+                    el.style.backgroundColor = ticketColors[ticketId];
+                } else {
+                    el.style.backgroundColor = DEFAULT_COLOR;
+                }
+            });
+        }
+
+        function bindTickets() {
+            document.querySelectorAll(TICKET_OUTER).forEach(frame => {
+                const inner = frame.querySelector(TICKET_INNER);
+                if (!inner) return;
+                if (frame.dataset.bound) return;
+                frame.dataset.bound = "true";
+                frame.style.cursor = "pointer";
+                frame.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    showPicker(inner);
+                });
+            });
+        }
+
+        createPicker();
+        applyDefaults();
+        bindTickets();
+
+        const observer = new MutationObserver(function() {
+            applyDefaults();
+            bindTickets();
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        const runUpdates = () => {
+            const currentName = localStorage.getItem("lippuNimi") || "mandariini";
+            const profilePic = localStorage.getItem("profilePic");
+
+            const allElements = document.querySelectorAll('body *:not(script):not(style)');
+            let elLippusi = null; let elOsta = null;
+
+            allElements.forEach(el => {
+                if (el.children.length === 0) {
+                    const text = el.textContent.trim();
+                    if (text === "Lippusi") {
+                        elLippusi = el;
+                        el.style.setProperty('font-size', '15px', 'important');
+                        el.style.setProperty('transform', 'translateY(-3px)', 'important');
+                    }
+                    if (text === "Osta lippu") {
+                        elOsta = el;
+                        el.style.setProperty('font-size', '15px', 'important');
+                        el.style.setProperty('transform', 'translateY(-3px)', 'important');
+                    }
+
+                    if (text === "mandariini" || text === "Koodaja:" || el.dataset.isNameField === "true") {
+                        el.dataset.isNameField = "true";
+                        if (el.innerText !== currentName) el.innerText = currentName;
+                    }
+
+                    if (text.startsWith("Hyvää ") || text === "Tervetuloa") {
+                        el.innerText = "Tervetuloa";
+                        const p = el.closest('div');
+                        if (p && p.parentElement) {
+                            const dashboardLink = p.parentElement.querySelector('a[href="/dashboard"]');
+                            if (dashboardLink) {
+                                dashboardLink.setAttribute('href', 'https://t.me/hopinakannu3');
+                            }
+                            
+                            if (profilePic) {
+                                const svg = p.parentElement.querySelector('svg');
+                                if (svg && svg.style.display !== 'none') {
+                                    svg.style.display = 'none';
+                                    const img = document.createElement('img'); 
+                                    img.src = profilePic; 
+                                    img.className = 'custom-profile-pic'; 
+                                    svg.parentNode.insertBefore(img, svg);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (el.tagName === 'DIV' && el.offsetHeight > 0 && el.offsetHeight < 5) {
+                    const style = window.getComputedStyle(el);
+                    if (style.backgroundColor.includes('122') || style.backgroundColor.includes('125') || style.backgroundColor.includes('201') || style.backgroundColor.includes('203') || style.backgroundColor.includes('#007')) {
+                        el.classList.add('tab-indicator-anim');
+                        el.style.setProperty('margin-left', '0', 'important');
+                        el.style.setProperty('width', '130px', 'important');
+                        el.style.setProperty('position', 'absolute', 'important');
+                        el.style.setProperty('bottom', '0', 'important');
+                        el.style.setProperty('left', (currentTabPosition === 'left' ? '25%' : '75%'), 'important');
+                        el.style.setProperty('transform', 'translateX(-50%) translateY(2px)', 'important');
+                    }
+                }
+            });
+
+            if (elLippusi && elOsta) {
+                const getD = (e) => {
+                    const s = window.getComputedStyle(e);
+                    const n = s.color.match(/\d+/g);
+                    return n ? (parseInt(n[0]) + parseInt(n[1]) + parseInt(n[2])) : 999;
+                };
+                if (getD(elOsta) < (getD(elLippusi) - 20)) currentTabPosition = 'left';
+                else if (getD(elLippusi) < (getD(elOsta) - 20)) currentTabPosition = 'right';
+            }
+        };
+
+        setInterval(runUpdates, 70);
+    });
+    </script>
+
+    <!-- Mandariini oli täällä -->
+
+</body></html>
